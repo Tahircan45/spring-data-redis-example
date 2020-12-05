@@ -4,8 +4,6 @@ import com.barracuda.redis.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Repository
@@ -20,8 +18,9 @@ public class ProductDao {
     public List<Product> findAll(){
         return template.opsForHash().values(HASH_KEY);
     }
-    public Product findProducyById(int id){
-        return (Product) template.opsForHash().get(HASH_KEY,id);
+    public Object findProducyById(int id){
+        System.out.println("findProducyById():Loaded From DB");
+        return  template.opsForHash().get(HASH_KEY,id);
     }
     public String deleteProduct(int id){
         template.opsForHash().delete(HASH_KEY,id);

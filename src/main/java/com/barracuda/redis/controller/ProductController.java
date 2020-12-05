@@ -3,12 +3,16 @@ package com.barracuda.redis.controller;
 import com.barracuda.redis.entity.Product;
 import com.barracuda.redis.repository.ProductDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/product")
+@EnableCaching
 public class ProductController {
     @Autowired
     private ProductDao dao;
@@ -20,10 +24,12 @@ public class ProductController {
     public List<Product> getAllProduct(){
         return dao.findAll();
     }
+    @Cacheable(key = "#id",value = "Product",unless = "#result.price > 1000")
     @GetMapping("/{id}")
-    public Product findProduct(@PathVariable int id){
-        return dao.findProducyById(id);
+    public Object findProduct(@PathVariable int id){
+        return  dao.findProducyById(id);
     }
+    @CacheEvict(key = "#id",value = "Product")
     @DeleteMapping("/{id}")
     public String  deleteProduct(@PathVariable int id){
         return dao.deleteProduct(id);
